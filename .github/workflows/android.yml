@@ -29,6 +29,31 @@ jobs:
         run: |
           unzip ToonMitra_Android_Starter.zip -d project
 
+      - name: Fix Java Kotlin compatibility
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          for p in Path("project").rglob("*.gradle.kts"):
+              s = p.read_text()
+
+              s = s.replace(
+                  "JavaVersion.VERSION_1_8",
+                  "JavaVersion.VERSION_17"
+              )
+              s = s.replace(
+                  'jvmTarget = "1.8"',
+                  'jvmTarget = "17"'
+              )
+              s = s.replace(
+                  "JvmTarget.JVM_1_8",
+                  "JvmTarget.JVM_17"
+              )
+
+              p.write_text(s)
+              print("Checked:", p)
+          PY
+
       - name: Build APK
         run: |
           cd project
