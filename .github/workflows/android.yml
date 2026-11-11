@@ -29,7 +29,7 @@ jobs:
         run: |
           unzip ToonMitra_Android_Starter.zip -d project
 
-            - name: Fix Java Kotlin compatibility
+      - name: Fix Java and Kotlin targets
         run: |
           cat >> project/app/build.gradle.kts <<'EOF'
 
@@ -37,9 +37,12 @@ jobs:
               sourceCompatibility = "17"
               targetCompatibility = "17"
           }
+
+          tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+              kotlinOptions.jvmTarget = "17"
+          }
           EOF
 
-          echo "Java compatibility fix added"
       - name: Build APK
         run: |
           cd project
